@@ -1,0 +1,29 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { LLMModule } from '@ai-solution/core/llm';
+import { DatabaseModule } from '@ai-solution/core/database';
+import { AuthModule } from '@ai-solution/core/auth';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import configuration from './config/configuration';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+      envFilePath: ['.env.local', '.env'],
+    }),
+    DatabaseModule.forRoot(),
+    AuthModule.forRoot(),
+    LLMModule.forRootAsync({
+      useFactory: () => ({
+        defaultProvider: '<%= llmProvider %>',
+        fallbackProviders: ['<%= llmProvider %>', 'ollama'],
+      }),
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}

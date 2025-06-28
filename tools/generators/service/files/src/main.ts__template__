@@ -1,0 +1,42 @@
+import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
+import { AppModule } from './app.module';
+import { Logger } from 'winston';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+  const logger = app.get(Logger);
+
+  // Global pipes
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    })
+  );
+
+  // CORS
+  app.enableCors({
+    origin: configService.get<string>('CORS_ORIGIN', '*'),
+    credentials: true,
+  });
+
+  // API prefix
+  app.setGlobalPrefix('api');
+
+  const port = configService.get<number>('PORT', <%= port %>);
+  
+  await app.listen(port);
+  
+  logger.info(`🚀 <%= className %> Service is running on: http://localhost:${port}/api`);
+  logger.info(`📝 Service description: <%= description %>`);
+  logger.info(`🤖 Primary LLM provider: <%= llmProvider %>`);
+}
+
+bootstrap().catch((error) => {
+  console.error('Failed to start the application:', error);
+  process.exit(1);
+});

@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ai-solution/core/llm": ["libs/core/llm/src/index.ts"],
+      "@ai-solution/core/database": ["libs/core/database/src/index.ts"],
+      "@ai-solution/core/auth": ["libs/core/auth/src/index.ts"],
+      "@ai-solution/common": ["libs/common/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

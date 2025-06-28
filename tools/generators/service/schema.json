@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "cli": "nx",
+  "$id": "ServiceGenerator",
+  "title": "AI Solution Service Generator",
+  "description": "Generate a new AI solution service with NestJS",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the service",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What is the name of the service?"
+    },
+    "directory": {
+      "type": "string",
+      "description": "The directory where the service will be generated",
+      "default": "services"
+    },
+    "tags": {
+      "type": "string",
+      "description": "Add tags to the project (used for linting)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the service",
+      "x-prompt": "What does this service do?"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author of the service",
+      "x-prompt": "Who is the author of this service?"
+    },
+    "llmProvider": {
+      "type": "string",
+      "description": "Primary LLM provider for this service",
+      "enum": ["openai", "claude", "ollama"],
+      "default": "openai",
+      "x-prompt": {
+        "message": "Which LLM provider would you like to use primarily?",
+        "type": "list",
+        "items": [
+          { "value": "openai", "label": "OpenAI (GPT models)" },
+          { "value": "claude", "label": "Anthropic Claude" },
+          { "value": "ollama", "label": "Ollama (Local LLM)" }
+        ]
+      }
+    },
+    "port": {
+      "type": "number",
+      "description": "Port number for the service",
+      "default": 3000
+    }
+  },
+  "required": ["name"]
+}

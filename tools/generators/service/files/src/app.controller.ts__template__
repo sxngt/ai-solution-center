@@ -1,0 +1,60 @@
+import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { AppService } from './app.service';
+import { Public, JwtAuthGuard, CurrentUser } from '@ai-solution/core/auth';
+
+export class ChatRequestDto {
+  message: string;
+  model?: string;
+}
+
+@Controller()
+@UseGuards(JwtAuthGuard)
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Public()
+  @Get('health')
+  getHealth() {
+    return {
+      status: 'ok',
+      service: '<%= className %>',
+      timestamp: new Date().toISOString(),
+      description: '<%= description %>',
+      primaryLLM: '<%= llmProvider %>',
+    };
+  }
+
+  @Public()
+  @Get('providers')
+  async getProviders() {
+    return this.appService.getAvailableProviders();
+  }
+
+  @Post('chat')
+  async chat(
+    @Body() chatRequest: ChatRequestDto,
+    @CurrentUser() user: any
+  ) {
+    return this.appService.generateResponse(
+      chatRequest.message,
+      user,
+      chatRequest.model
+    );
+  }
+
+  @Public()
+  @Get()
+  getServiceInfo() {
+    return {
+      service: '<%= className %>',
+      description: '<%= description %>',
+      author: '<%= author %>',
+      version: '1.0.0',
+      endpoints: {
+        health: 'GET /api/health',
+        providers: 'GET /api/providers',
+        chat: 'POST /api/chat (requires auth)',
+      },
+    };
+  }
+}

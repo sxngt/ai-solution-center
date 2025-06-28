@@ -1,0 +1,13 @@
+{
+  "name": "@ai-solution/core/llm",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "openai": "^5.0.0",
+    "@anthropic-ai/sdk": "^0.60.0"
+  },
+  "dependencies": {}
+}

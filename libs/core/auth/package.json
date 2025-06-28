@@ -1,0 +1,21 @@
+{
+  "name": "@ai-solution/core/auth",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/passport": "^11.0.0",
+    "@nestjs/typeorm": "^11.0.0",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "typeorm": "^0.3.0",
+    "bcrypt": "^6.0.0",
+    "class-validator": "^0.14.0",
+    "class-transformer": "^0.5.0"
+  },
+  "dependencies": {}
+}

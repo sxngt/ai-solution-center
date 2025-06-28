@@ -6,8 +6,49 @@
       "sharedGlobals"
     ],
     "production": [
-      "default"
+      "default",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s",
+      "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/test-setup.[jt]s"
     ],
-    "sharedGlobals": []
-  }
+    "sharedGlobals": [
+      "{workspaceRoot}/jest.config.js",
+      "{workspaceRoot}/jest.preset.js"
+    ]
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "test": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+    },
+    "e2e": {
+      "inputs": ["default", "^production"]
+    }
+  },
+  "generators": {
+    "@nx/nest:application": {
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nx/nest:library": {
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    }
+  },
+  "defaultProject": "ai-solution-center",
+  "affected": {
+    "defaultBase": "main"
+  },
+  "cli": {
+    "packageManager": "yarn"
+  },
+  "plugins": ["@nx/nest"]
 }

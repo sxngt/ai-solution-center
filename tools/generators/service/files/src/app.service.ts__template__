@@ -1,0 +1,70 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { LLMService } from '@ai-solution/core/llm';
+
+@Injectable()
+export class AppService {
+  private readonly logger = new Logger(AppService.name);
+
+  constructor(private readonly llmService: LLMService) {}
+
+  async generateResponse(
+    message: string,
+    user?: any,
+    model?: string
+  ): Promise<any> {
+    try {
+      this.logger.log(
+        `Generating response for user ${user?.id || 'anonymous'}: ${message.substring(0, 50)}...`
+      );
+
+      const response = await this.llmService.generateCompletion(
+        [
+          {
+            role: 'system',
+            content: `You are an AI assistant for the <%= className %> service. <%= description %>
+            
+            Please provide helpful, accurate, and relevant responses to user queries.
+            Keep responses concise but informative.`,
+          },
+          {
+            role: 'user',
+            content: message,
+          },
+        ],
+        {
+          provider: '<%= llmProvider %>',
+          model: model,
+          temperature: 0.7,
+          maxTokens: 1000,
+        }
+      );
+
+      return {
+        response: response.content,
+        provider: response.provider,
+        usage: response.usage,
+        timestamp: new Date().toISOString(),
+        user: user?.id || 'anonymous',
+      };
+    } catch (error) {
+      this.logger.error('Failed to generate response', error);
+      throw error;
+    }
+  }
+
+  async getAvailableProviders(): Promise<any> {
+    try {
+      const providers = this.llmService.getAvailableProviders();
+      const availability = await this.llmService.checkProviderAvailability();
+
+      return {
+        providers,
+        availability,
+        default: '<%= llmProvider %>',
+      };
+    } catch (error) {
+      this.logger.error('Failed to check providers', error);
+      throw error;
+    }
+  }
+}

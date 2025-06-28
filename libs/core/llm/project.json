@@ -1,0 +1,32 @@
+{
+  "name": "core-llm",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/core/llm/src",
+  "projectType": "library",
+  "tags": ["scope:core", "type:lib"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/core/llm",
+        "tsConfig": "libs/core/llm/tsconfig.lib.json",
+        "packageJson": "libs/core/llm/package.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["libs/core/llm/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/core/llm/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

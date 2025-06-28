@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: ai-solution-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ai_solution
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: dev123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - ai-solution-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U developer -d ai_solution"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: ai-solution-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ai-solution-network
+    command: redis-server --appendonly yes --requirepass dev123
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "dev123", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Ollama (Local LLM) - Optional
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ai-solution-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - ai-solution-network
+    profiles:
+      - ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Adminer (Database Management) - Optional
+  adminer:
+    image: adminer:4-standalone
+    container_name: ai-solution-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - ai-solution-network
+    profiles:
+      - tools
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_DESIGN: dracula
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  ollama_data:
+    driver: local
+
+networks:
+  ai-solution-network:
+    driver: bridge
