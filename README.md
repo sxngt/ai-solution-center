@@ -1,349 +1,356 @@
-# 🚀 AI Solution Center
+# AI Solution Center
 
-AI 혁신 솔루션센터 - 대학생들을 위한 AI 기반 서비스 플랫폼
+대학생을 위한 AI 기반 서비스 플랫폼 - Nx 모노레포 아키텍처
 
-[![CI Pipeline](https://github.com/your-org/ai-solution-center/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/ai-solution-center/actions/workflows/ci.yml)
-[![Release Pipeline](https://github.com/your-org/ai-solution-center/actions/workflows/release.yml/badge.svg)](https://github.com/your-org/ai-solution-center/actions/workflows/release.yml)
+## 프로젝트 개요
 
-## 📋 프로젝트 개요
+AI Solution Center는 대학생들이 AI 기반 서비스를 쉽게 개발하고 배포할 수 있도록 설계된 모노레포 플랫폼입니다. 각 개발자가 독립적으로 서비스를 개발하면서도 공통 기능과 LLM 통합을 효율적으로 공유할 수 있습니다.
 
-AI Solution Center는 대학생들을 위한 혁신적인 AI 기반 서비스 플랫폼입니다. Nx 모노레포 구조를 사용하여 여러 개발자가 독립적으로 서비스를 개발하면서도 LLM 통합과 공통 기능을 공유할 수 있도록 설계되었습니다.
+### 핵심 특징
 
-### 🎯 핵심 특징
+- **모노레포 아키텍처**: Nx를 사용한 확장 가능한 구조
+- **멀티 LLM 지원**: OpenAI, Claude, Ollama 등 다양한 LLM 프로바이더
+- **통합 인증 시스템**: JWT 기반 보안 인증 및 권한 관리
+- **자동화된 워크플로우**: 서비스 생성부터 배포까지 자동화
+- **마이크로서비스 구조**: 독립적인 서비스 개발 및 배포
 
-- **🔧 모노레포 아키텍처**: Nx를 사용한 확장 가능한 모노레포 구조
-- **🤖 멀티 LLM 지원**: OpenAI, Claude, Ollama 등 다양한 LLM 프로바이더 지원
-- **🛡️ 통합 인증 시스템**: JWT 기반 보안 인증 및 권한 관리
-- **🐳 컨테이너화**: Docker를 활용한 일관된 개발/배포 환경
-- **⚡ 자동화**: 서비스 생성부터 배포까지 완전 자동화된 워크플로우
-- **📊 확장성**: 마이크로서비스 아키텍처로 무한 확장 가능
+## 시작하기
 
-## 🏗️ 기술 스택
+### 필수 요구사항
 
-### Core Technologies
-- **🔷 Backend**: NestJS 11+, TypeScript 5+
-- **📦 Monorepo**: Nx 21+
-- **🗃️ Database**: PostgreSQL 15+ with TypeORM 0.3+
-- **🗄️ Cache**: Redis 7+
-- **🔐 Authentication**: JWT with Passport
-
-### LLM Integration
-- **🤖 OpenAI**: GPT-4, GPT-3.5 등 최신 GPT 모델
-- **🧠 Anthropic Claude**: Claude-3.5-Sonnet 등 고성능 모델
-- **🏠 Ollama**: 로컬 LLM 실행 (Llama, Mistral 등)
-
-### DevOps & Tools
-- **🐳 Containerization**: Docker & Docker Compose
-- **🚀 CI/CD**: GitHub Actions
-- **📏 Code Quality**: ESLint, Prettier, Husky
-- **🧪 Testing**: Jest, Supertest
-- **📊 Monitoring**: Winston Logging
-
-## 🚀 빠른 시작
-
-### 1. 사전 요구사항
-
-- Node.js 18+ 
-- Yarn 1.22+
-- Docker & Docker Compose
+- Node.js 18.0 이상
+- Yarn 1.22 이상
+- Docker 및 Docker Compose
 - Git
 
-### 2. 설치 및 설정
+### 초기 설정
 
 ```bash
-# 저장소 클론
+# 1. 저장소 클론
 git clone https://github.com/your-org/ai-solution-center.git
 cd ai-solution-center
 
-# 개발 환경 자동 설정
-yarn setup:dev
+# 2. 의존성 설치
+yarn install
+
+# 3. 환경 변수 설정
+cp .env.example .env
+# .env 파일을 열어서 필요한 API 키 설정
+
+# 4. Docker 서비스 시작 (PostgreSQL, Redis)
+yarn docker:up
+
+# 5. Core 라이브러리 빌드
+yarn nx build core-llm
+yarn nx build core-database
+yarn nx build core-auth
 ```
 
-이 명령어가 다음을 자동으로 수행합니다:
-- 의존성 설치
-- 환경 변수 설정
-- Docker 서비스 시작 (PostgreSQL, Redis)
-- Core 라이브러리 빌드
-
-### 3. 첫 번째 서비스 생성
+### 첫 번째 서비스 생성
 
 ```bash
-# 대화형 서비스 생성
+# 대화형 서비스 생성기 실행
 yarn create:service
 
 # 또는 명령줄로 직접 생성
-yarn create:service my-chat-service "AI 채팅 서비스" "개발자명" openai 3001
+yarn create:service [서비스명] [설명] [작성자] [LLM제공자] [포트]
+
+# 예시
+yarn create:service chat-service "AI 채팅 서비스" "개발팀" "openai" 3001
 ```
 
-### 4. 서비스 실행
+서비스 생성 시 입력 정보:
+- **서비스명**: 영문 소문자와 하이픈만 사용 (예: chat-service)
+- **설명**: 서비스에 대한 간단한 설명
+- **작성자**: 개발자 또는 팀 이름
+- **LLM 제공자**: openai, claude, ollama 중 선택
+- **포트**: 서비스가 실행될 포트 번호 (1000-65535)
+
+### 서비스 실행
 
 ```bash
 # 생성한 서비스 실행
-yarn nx serve my-chat-service
+yarn nx serve [서비스명]
 
-# 서비스 접속
+# 예시
+yarn nx serve chat-service
+
+# 서비스 접속 확인
 curl http://localhost:3001/api/health
 ```
 
-## 📁 프로젝트 구조
+## 프로젝트 구조
 
 ```
 ai-solution-center/
-├── 📁 apps/
-│   └── 📁 services/           # 개별 마이크로서비스들
-│       └── 📁 example-service/
-├── 📁 libs/
-│   ├── 📁 core/              # 핵심 공유 라이브러리
-│   │   ├── 📁 llm/           # LLM 통합 클라이언트
-│   │   ├── 📁 database/      # TypeORM 데이터베이스 모듈
-│   │   └── 📁 auth/          # JWT 인증 모듈
-│   ├── 📁 common/            # 공통 유틸리티
-│   └── 📁 features/          # 선택적 기능 모듈
-├── 📁 tools/
-│   ├── 📁 generators/        # Nx 서비스 생성기
-│   └── 📁 scripts/           # 유틸리티 스크립트
-├── 📁 docker/
-│   └── 📁 development/       # 개발용 Docker 설정
-└── 📁 .github/
-    └── 📁 workflows/         # CI/CD 파이프라인
+├── apps/
+│   └── services/              # 개별 마이크로서비스
+│       └── [service-name]/    # 각 서비스 디렉토리
+│           ├── src/
+│           │   ├── app/
+│           │   │   ├── app.module.ts      # NestJS 모듈
+│           │   │   ├── app.controller.ts  # API 엔드포인트
+│           │   │   └── app.service.ts     # 비즈니스 로직
+│           │   └── main.ts                # 진입점
+│           └── project.json               # Nx 프로젝트 설정
+├── libs/
+│   └── core/                  # 공유 라이브러리
+│       ├── llm/               # LLM 통합 모듈
+│       ├── database/          # 데이터베이스 모듈
+│       └── auth/              # 인증 모듈
+├── tools/
+│   └── scripts/               # 유틸리티 스크립트
+│       └── create-service.js  # 서비스 생성기
+└── docker/
+    └── docker-compose.yml     # Docker 설정
 ```
 
-## 🛠️ 주요 명령어
+## 개발 가이드
 
-### 개발 명령어
+### 주요 명령어
+
+#### 서비스 관리
 ```bash
 # 새 서비스 생성
-yarn create:service <service-name>
+yarn create:service [서비스명]
 
 # 서비스 실행
-yarn nx serve <service-name>
+yarn nx serve [서비스명]
 
 # 서비스 빌드
-yarn nx build <service-name>
+yarn nx build [서비스명]
 
-# 테스트 실행
-yarn nx test <service-name>
+# 서비스 테스트
+yarn nx test [서비스명]
 
-# 모든 영향받은 프로젝트 테스트
-yarn affected:test
+# 린트 검사
+yarn nx lint [서비스명]
 ```
 
-### Docker 명령어
+#### Docker 관리
 ```bash
-# 기본 서비스 시작 (PostgreSQL, Redis)
+# Docker 서비스 시작
 yarn docker:up
 
-# 모든 서비스 중지
+# Docker 서비스 중지
 yarn docker:down
 
-# 관리 도구 시작 (Adminer)
-yarn docker:tools
-
-# Ollama (로컬 LLM) 시작
-yarn docker:ollama
-
-# 로그 확인
+# Docker 로그 확인
 yarn docker:logs
+
+# Docker 볼륨 정리
+yarn docker:clean
 ```
 
-### 프로젝트 관리
+#### 프로젝트 관리
 ```bash
-# 프로젝트 의존성 그래프 보기
-yarn graph
+# 의존성 그래프 확인
+yarn nx graph
 
-# 코드 포맷팅
-yarn format
+# 영향받은 프로젝트 테스트
+yarn nx affected:test
 
-# 린팅
-yarn lint
+# 영향받은 프로젝트 빌드
+yarn nx affected:build
 
-# 캐시 정리
-yarn clean
+# Nx 캐시 초기화
+yarn nx reset
 ```
 
-## 🔧 환경 변수 설정
+### 환경 변수 설정
 
-`.env.example`을 `.env`로 복사하고 필요한 값들을 설정하세요:
-
-```bash
-cp .env.example .env
-```
-
-### 🔑 필수 설정
+`.env` 파일에 다음 변수들을 설정해야 합니다:
 
 ```env
 # LLM API 키 (최소 하나는 필수)
-OPENAI_API_KEY=sk-your-openai-key
-ANTHROPIC_API_KEY=sk-ant-your-claude-key
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+OLLAMA_BASE_URL=http://localhost:11434
 
-# JWT 보안 키 (운영환경에서는 반드시 변경)
-JWT_SECRET=your-super-secret-key
-
-# 데이터베이스 (기본값 사용 가능)
+# 데이터베이스
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USERNAME=postgres
 DATABASE_PASSWORD=dev123
+DATABASE_NAME=ai_solution_center
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# JWT
+JWT_SECRET=your-secret-key
+JWT_EXPIRATION=7d
+
+# 서버 설정
+NODE_ENV=development
 ```
 
-## 🏛️ 아키텍처
+## API 엔드포인트
 
-### Core Libraries
+생성된 각 서비스는 다음과 같은 기본 엔드포인트를 제공합니다:
 
-#### 🤖 LLM Module (`@ai-solution/core/llm`)
-- 다중 LLM 프로바이더 지원
+| 메소드 | 경로 | 설명 |
+|--------|------|------|
+| GET | /api | 서비스 정보 |
+| GET | /api/health | 헬스 체크 |
+| POST | /api/chat | AI 채팅 요청 |
+| GET | /api/providers | 사용 가능한 LLM 프로바이더 |
+
+### 요청 예시
+
+```bash
+# 헬스 체크
+curl http://localhost:3001/api/health
+
+# AI 채팅 요청
+curl -X POST http://localhost:3001/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "안녕하세요!",
+    "provider": "openai"
+  }'
+
+# 프로바이더 확인
+curl http://localhost:3001/api/providers
+```
+
+## 아키텍처 설명
+
+### 마이크로서비스 구조
+
+각 서비스는 독립적인 NestJS 애플리케이션으로 구성되며, 개별 포트에서 실행됩니다:
+
+- **독립적 배포**: 각 서비스를 개별적으로 배포 가능
+- **기술 스택 자유도**: 서비스별로 다른 기술 스택 적용 가능
+- **장애 격리**: 한 서비스의 장애가 다른 서비스에 영향 없음
+- **확장성**: 서비스별로 독립적인 스케일링 가능
+
+### Core 라이브러리
+
+#### LLM Module (@ai-solution/core/llm)
+다중 LLM 프로바이더를 통합 관리하는 모듈:
+- OpenAI, Claude, Ollama 지원
 - 자동 폴백 및 재시도 로직
 - 통합 인터페이스 제공
 
-```typescript
-// 사용 예시
-import { LLMService } from '@ai-solution/core/llm';
+#### Database Module (@ai-solution/core/database)
+TypeORM 기반 데이터베이스 관리:
+- PostgreSQL 연동
+- BaseEntity 및 Repository 패턴
+- 마이그레이션 지원
 
-const response = await llmService.generateCompletion([
-  { role: 'user', content: 'Hello!' }
-], { provider: 'openai' });
-```
-
-#### 🗃️ Database Module (`@ai-solution/core/database`)
-- TypeORM 기반 PostgreSQL 연동
-- BaseEntity 및 BaseRepository 제공
-- 자동 마이그레이션 지원
-
-#### 🔐 Auth Module (`@ai-solution/core/auth`)
-- JWT 기반 인증/인가
-- 역할 기반 접근 제어 (RBAC)
+#### Auth Module (@ai-solution/core/auth)
+JWT 기반 인증/인가:
+- 토큰 생성 및 검증
+- 역할 기반 접근 제어
 - Passport 전략 통합
 
-### 서비스 템플릿
-
-생성되는 각 서비스는 다음 구조를 가집니다:
-
-```typescript
-// 기본 컨트롤러 예시
-@Controller()
-export class AppController {
-  @Post('chat')
-  @UseGuards(JwtAuthGuard)
-  async chat(@Body() request: ChatRequest, @CurrentUser() user: User) {
-    return this.appService.generateResponse(request.message, user);
-  }
-}
-```
-
-## 🧪 테스팅
-
-### 단위 테스트
-```bash
-# 특정 서비스 테스트
-yarn nx test my-service
-
-# 모든 영향받은 프로젝트 테스트
-yarn affected:test
-
-# 커버리지 포함 테스트
-yarn nx test my-service --coverage
-```
-
-### E2E 테스트
-```bash
-# E2E 테스트 실행
-yarn nx e2e my-service-e2e
-```
-
-## 🚀 배포
-
-### Docker 빌드
-```bash
-# 서비스 빌드
-yarn nx build my-service
-
-# Docker 이미지 빌드
-docker build -t my-service:latest -f apps/services/my-service/Dockerfile .
-```
-
-### CI/CD Pipeline
-
-GitHub Actions를 통한 자동화된 파이프라인:
-
-1. **PR 검증**: 린팅, 테스트, 빌드
-2. **배포**: Docker 이미지 빌드 및 레지스트리 푸시
-3. **릴리스**: Helm 차트 생성 및 배포
-
-## 🤝 기여하기
-
-### 개발 워크플로우
-
-1. **이슈 생성**: 새로운 기능이나 버그 리포트
-2. **브랜치 생성**: `feature/service-name` 또는 `fix/issue-description`
-3. **개발**: 로컬에서 개발 및 테스트
-4. **PR 생성**: 코드 리뷰 및 CI 검증
-5. **병합**: 승인 후 main 브랜치에 병합
-
-### 코딩 규칙
-
-- **TypeScript**: 엄격한 타입 검사 활용
-- **ESLint**: 코드 스타일 일관성 유지
-- **Testing**: 80% 이상 테스트 커버리지 목표
-- **Documentation**: README 및 JSDoc 작성
-
-## 📚 추가 자료
-
-### 공식 문서
-- [NestJS 문서](https://docs.nestjs.com/)
-- [Nx 문서](https://nx.dev/)
-- [TypeORM 문서](https://typeorm.io/)
-
-### LLM 프로바이더 문서
-- [OpenAI API](https://platform.openai.com/docs)
-- [Anthropic Claude API](https://docs.anthropic.com/)
-- [Ollama 문서](https://ollama.ai/docs)
-
-## 🆘 문제 해결
+## 문제 해결
 
 ### 자주 발생하는 문제
 
-**🔴 Docker 서비스가 시작되지 않는 경우:**
+#### TypeScript 빌드 오류
 ```bash
-# Docker 데몬 확인
-docker info
+# Core 라이브러리 재빌드
+yarn nx build core-llm
+yarn nx build core-database
+yarn nx build core-auth
+
+# 캐시 초기화
+yarn nx reset
+```
+
+#### Docker 연결 오류
+```bash
+# Docker 상태 확인
+docker ps
 
 # 포트 충돌 확인
-sudo lsof -i :5432
-sudo lsof -i :6379
+lsof -i :5432  # PostgreSQL
+lsof -i :6379  # Redis
 
-# 컨테이너 재시작
-yarn docker:clean && yarn docker:up
+# Docker 재시작
+yarn docker:down
+yarn docker:clean
+yarn docker:up
 ```
 
-**🔴 LLM API 연결 오류:**
+#### 서비스 실행 오류
 ```bash
-# API 키 확인
-echo $OPENAI_API_KEY
-
-# 프로바이더 상태 확인
-curl http://localhost:3000/api/providers
-```
-
-**🔴 Nx 빌드 오류:**
-```bash
-# 캐시 정리
-yarn clean
-
 # 의존성 재설치
-rm -rf node_modules yarn.lock
+rm -rf node_modules
 yarn install
+
+# 서비스 재빌드
+yarn nx build [서비스명] --skip-nx-cache
 ```
 
-## 📞 지원
+## 프로덕션 배포
 
-- **이슈 리포트**: [GitHub Issues](https://github.com/your-org/ai-solution-center/issues)
-- **기능 요청**: [GitHub Discussions](https://github.com/your-org/ai-solution-center/discussions)
-- **문서**: [프로젝트 위키](https://github.com/your-org/ai-solution-center/wiki)
+### Docker 이미지 빌드
 
-## 📄 라이선스
+```bash
+# 서비스 빌드
+yarn nx build [서비스명]
 
-이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
+# Docker 이미지 생성
+docker build -t [서비스명]:latest \
+  -f apps/services/[서비스명]/Dockerfile .
+
+# 이미지 실행
+docker run -p 3000:3000 \
+  --env-file .env.production \
+  [서비스명]:latest
+```
+
+### 환경별 설정
+
+프로덕션 환경에서는 다음 사항을 반드시 변경하세요:
+- JWT_SECRET: 강력한 랜덤 문자열 사용
+- DATABASE_PASSWORD: 복잡한 패스워드 설정
+- NODE_ENV: production으로 설정
+- LLM API 키: 프로덕션용 키 사용
+
+## 기여 가이드
+
+### 브랜치 전략
+
+- `main`: 프로덕션 배포 브랜치
+- `develop`: 개발 통합 브랜치
+- `feature/[기능명]`: 새 기능 개발
+- `fix/[이슈번호]`: 버그 수정
+
+### 코드 스타일
+
+- TypeScript 엄격 모드 사용
+- ESLint 규칙 준수
+- Prettier 포맷팅 적용
+- 의미 있는 커밋 메시지 작성
+
+### 테스트 작성
+
+- 단위 테스트: 비즈니스 로직 검증
+- 통합 테스트: API 엔드포인트 검증
+- E2E 테스트: 전체 워크플로우 검증
+- 최소 80% 코드 커버리지 유지
+
+## 추가 리소스
+
+### 공식 문서
+- [NestJS Documentation](https://docs.nestjs.com/)
+- [Nx Documentation](https://nx.dev/)
+- [TypeORM Documentation](https://typeorm.io/)
+
+### LLM 프로바이더
+- [OpenAI API Reference](https://platform.openai.com/docs)
+- [Anthropic Claude API](https://docs.anthropic.com/)
+- [Ollama Documentation](https://ollama.ai/docs)
+
+## 라이선스
+
+MIT License - 자세한 내용은 [LICENSE](LICENSE) 파일 참조
 
 ---
 
-<div align="center">
-  <p><strong>🎓 AI Solution Center로 대학생들의 혁신적인 AI 서비스를 만들어보세요!</strong></p>
-  <p>Made with ❤️ by AI Solution Team</p>
-</div>
+AI Solution Center - 대학생을 위한 AI 서비스 플랫폼

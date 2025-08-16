@@ -111,22 +111,22 @@ async function createService() {
       process.exit(1);
     }
 
-    // Run the Nx generator
+    // Run the Nx NestJS generator to create the service
     const generatorCommand = [
-      'yarn',
+      'npx',
       'nx',
-      'generate',
-      './tools/generators/service',
-      answers.name,
-      `--description="${answers.description}"`,
-      `--author="${answers.author}"`,
-      `--llmProvider=${answers.llmProvider}`,
-      `--port=${answers.port}`,
-      '--no-interactive',
+      'g',
+      '@nx/nest:application',
+      `--name=${answers.name}`,
+      `--directory=apps/services/${answers.name}`,
     ].join(' ');
 
     console.log(chalk.gray(`Running: ${generatorCommand}`));
     execSync(generatorCommand, { stdio: 'inherit' });
+
+    // Customize the generated service for AI chat functionality
+    console.log(chalk.blue('\\n🔧 Customizing service for AI functionality...'));
+    await customizeAIService(answers);
 
     console.log(chalk.green('\\n✅ Service created successfully!'));
     console.log(chalk.blue('\\n📋 Service Information:'));
@@ -201,6 +201,251 @@ async function main() {
 
 if (require.main === module) {
   main().catch(console.error);
+}
+
+// Function to customize the generated service for AI functionality
+async function customizeAIService(answers) {
+  const servicePath = path.join(process.cwd(), 'apps', 'services', answers.name);
+  
+  // Update app.module.ts to include LLMModule
+  const moduleFilePath = path.join(servicePath, 'src', 'app', 'app.module.ts');
+  if (fs.existsSync(moduleFilePath)) {
+    const moduleTemplate = `import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { LLMModule } from '@ai-solution/core/llm';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    LLMModule.forRoot(),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+`;
+    fs.writeFileSync(moduleFilePath, moduleTemplate);
+    console.log(chalk.gray(`   ✓ Updated app.module.ts with LLM integration`));
+  }
+
+  // Update app.service.ts with AI chat functionality
+  const serviceFilePath = path.join(servicePath, 'src', 'app', 'app.service.ts');
+  if (fs.existsSync(serviceFilePath)) {
+    const serviceTemplate = `import { Injectable } from '@nestjs/common';
+import { LLMService } from '@ai-solution/core/llm';
+
+export interface ChatRequest {
+  message: string;
+  provider?: 'openai' | 'claude' | 'ollama';
+}
+
+export interface ChatResponse {
+  response: string;
+  provider: string;
+  timestamp: Date;
+}
+
+@Injectable()
+export class AppService {
+  constructor(private readonly llmService: LLMService) {}
+
+  async generateChatResponse(request: ChatRequest): Promise<ChatResponse> {
+    try {
+      const response = await this.llmService.generateCompletion(
+        [
+          {
+            role: 'system',
+            content: '당신은 도움이 되는 AI 어시스턴트입니다. 사용자의 질문에 정확하고 유용한 답변을 제공하세요.'
+          },
+          {
+            role: 'user',
+            content: request.message
+          }
+        ],
+        {
+          provider: request.provider || '${answers.llmProvider}',
+          maxTokens: 500,
+          temperature: 0.7
+        }
+      );
+
+      return {
+        response: response.content,
+        provider: response.provider,
+        timestamp: new Date()
+      };
+    } catch (error) {
+      // 실제 LLM 연동이 실패하면 모의 응답 반환
+      const mockResponses = [
+        "안녕하세요! AI 챗봇입니다. 무엇을 도와드릴까요?",
+        "흥미로운 질문이네요! 더 자세히 설명해주시겠어요?",
+        "정말 좋은 질문입니다! 이것에 대해 함께 알아보겠습니다."
+      ];
+      
+      const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+      
+      return {
+        response: \`\${randomResponse}\\n\\n(모의 모드 - 원본 메시지: "\${request.message}")\`,
+        provider: 'mock',
+        timestamp: new Date()
+      };
+    }
+  }
+
+  async getAvailableProviders() {
+    try {
+      const providers = await this.llmService.getAvailableProviders();
+      return {
+        providers,
+        total: providers.length,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        providers: ['mock'],
+        total: 1,
+        status: 'LLM integration pending - using mock mode',
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  getData(): { message: string } {
+    return { message: \`Welcome to ${answers.name}! This service is powered by ${answers.llmProvider.toUpperCase()} LLM.\` };
+  }
+}
+`;
+    fs.writeFileSync(serviceFilePath, serviceTemplate);
+    console.log(chalk.gray(`   ✓ Updated app.service.ts with AI chat functionality`));
+  }
+
+  // Update app.controller.ts with chat endpoints
+  const controllerFilePath = path.join(servicePath, 'src', 'app', 'app.controller.ts');
+  if (fs.existsSync(controllerFilePath)) {
+    const controllerTemplate = `import { Controller, Get, Post, Body } from '@nestjs/common';
+import { AppService } from './app.service';
+
+export interface ChatRequest {
+  message: string;
+  provider?: 'openai' | 'claude' | 'ollama';
+}
+
+@Controller()
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get()
+  getData() {
+    return this.appService.getData();
+  }
+
+  @Get('health')
+  getHealth() {
+    return { 
+      status: 'ok', 
+      service: '${answers.name}',
+      description: '${answers.description}',
+      author: '${answers.author}',
+      port: ${answers.port},
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  @Post('chat')
+  async chat(@Body() request: ChatRequest) {
+    return this.appService.generateChatResponse(request);
+  }
+
+  @Get('providers')
+  async getProviders() {
+    return this.appService.getAvailableProviders();
+  }
+}
+`;
+    fs.writeFileSync(controllerFilePath, controllerTemplate);
+    console.log(chalk.gray(`   ✓ Updated app.controller.ts with AI chat endpoints`));
+  }
+
+  // Update main.ts with custom port
+  const mainFilePath = path.join(servicePath, 'src', 'main.ts');
+  if (fs.existsSync(mainFilePath)) {
+    const mainTemplate = `/**
+ * This is not a production server yet!
+ * This is only a minimal backend to get started.
+ */
+
+import { Logger } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+
+import { AppModule } from './app/app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const globalPrefix = 'api';
+  app.setGlobalPrefix(globalPrefix);
+  const port = process.env.PORT || ${answers.port};
+  await app.listen(port);
+  Logger.log(
+    \`🚀 ${answers.name} is running on: http://localhost:\${port}/\${globalPrefix}\`
+  );
+}
+
+bootstrap();
+`;
+    fs.writeFileSync(mainFilePath, mainTemplate);
+    console.log(chalk.gray(`   ✓ Updated main.ts with custom port (${answers.port})`));
+  }
+
+  // Create a simple README for the service
+  const readmeFilePath = path.join(servicePath, 'README.md');
+  const readmeTemplate = `# ${answers.name}
+
+${answers.description}
+
+**Author:** ${answers.author}  
+**Primary LLM Provider:** ${answers.llmProvider.toUpperCase()}  
+**Port:** ${answers.port}
+
+## API Endpoints
+
+- \`GET /api\` - Service information
+- \`GET /api/health\` - Health check
+- \`POST /api/chat\` - AI chat endpoint
+- \`GET /api/providers\` - Available LLM providers
+
+## Usage
+
+\`\`\`bash
+# Start the service
+yarn nx serve ${answers.name}
+
+# Test the chat endpoint
+curl -X POST http://localhost:${answers.port}/api/chat \\
+  -H "Content-Type: application/json" \\
+  -d '{"message": "안녕하세요!", "provider": "${answers.llmProvider}"}'
+\`\`\`
+
+## Environment Variables
+
+Make sure to set up your LLM provider API keys in \`.env\`:
+
+\`\`\`bash
+# OpenAI
+OPENAI_API_KEY=your_openai_key
+
+# Anthropic Claude  
+ANTHROPIC_API_KEY=your_claude_key
+
+# Ollama (local)
+OLLAMA_BASE_URL=http://localhost:11434
+\`\`\`
+`;
+  fs.writeFileSync(readmeFilePath, readmeTemplate);
+  console.log(chalk.gray(`   ✓ Created README.md with service documentation`));
 }
 
 module.exports = { createService };

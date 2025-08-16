@@ -22,7 +22,7 @@ export class BaseRepository<T extends BaseEntity> extends Repository<T> {
     return entity;
   }
 
-  async findOneByOrFail(where: FindOptionsWhere<T>): Promise<T> {
+  override async findOneByOrFail(where: FindOptionsWhere<T>): Promise<T> {
     const entity = await this.findOneBy(where);
     
     if (!entity) {
@@ -70,7 +70,7 @@ export class BaseRepository<T extends BaseEntity> extends Repository<T> {
     return this.save(entities);
   }
 
-  async exists(where: FindOptionsWhere<T>): Promise<boolean> {
+  async existsByWhere(where: FindOptionsWhere<T>): Promise<boolean> {
     const count = await this.count({ where });
     return count > 0;
   }

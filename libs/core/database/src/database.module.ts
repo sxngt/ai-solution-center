@@ -2,8 +2,15 @@ import { DynamicModule, Module, Global } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-export interface DatabaseModuleOptions extends Partial<TypeOrmModuleOptions> {
-  // Additional custom options can be added here
+export interface DatabaseModuleOptions {
+  host?: string;
+  port?: number;
+  username?: string;
+  password?: string;
+  database?: string;
+  synchronize?: boolean;
+  logging?: boolean;
+  [key: string]: any;
 }
 
 @Global()

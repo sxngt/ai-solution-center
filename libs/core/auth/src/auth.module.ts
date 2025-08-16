@@ -110,7 +110,7 @@ export class AuthModule {
         RolesGuard,
         {
           provide: 'AUTH_OPTIONS',
-          useFactory: options.useFactory,
+          useFactory: options.useFactory || (() => ({})),
           inject: options.inject || [],
         },
       ],

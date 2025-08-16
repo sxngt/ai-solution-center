@@ -4,13 +4,5 @@
     "core-llm": "libs/core/llm",
     "core-database": "libs/core/database",
     "core-auth": "libs/core/auth"
-  },
-  "generators": {
-    "@nx/nest:application": {
-      "tags": "scope:app,type:service"
-    },
-    "@nx/nest:library": {
-      "tags": "scope:lib"
-    }
   }
 }

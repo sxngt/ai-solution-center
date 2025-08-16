@@ -52,7 +52,7 @@ export class OllamaProvider implements LLMProvider {
         throw new Error(`Ollama API error: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as any;
 
       return {
         content: data.message?.content || '',

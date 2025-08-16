@@ -7,20 +7,20 @@ import {
 
 export abstract class BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @CreateDateColumn({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn({
     type: 'timestamp with time zone',

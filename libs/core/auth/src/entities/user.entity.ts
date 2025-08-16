@@ -1,7 +1,15 @@
-import { Entity, Column, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { 
+  Entity, 
+  Column, 
+  BeforeInsert, 
+  BeforeUpdate,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
-import { BaseEntity } from '@ai-solution/core/database';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -10,29 +18,51 @@ export enum UserRole {
 }
 
 @Entity('users')
-export class User extends BaseEntity {
+export class User {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
+
+  @CreateDateColumn({
+    type: 'timestamp with time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt!: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp with time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updatedAt!: Date;
+
+  @DeleteDateColumn({
+    type: 'timestamp with time zone',
+    nullable: true,
+  })
+  deletedAt?: Date;
+
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column()
   @Exclude()
-  password: string;
+  password!: string;
 
   @Column()
-  firstName: string;
+  firstName!: string;
 
   @Column()
-  lastName: string;
+  lastName!: string;
 
   @Column({
     type: 'enum',
     enum: UserRole,
     default: UserRole.USER,
   })
-  role: UserRole;
+  role!: UserRole;
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({ nullable: true })
   lastLoginAt?: Date;

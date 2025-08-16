@@ -1,8 +1,8 @@
 {
   "name": "@ai-solution/core/database",
   "version": "0.0.1",
-  "main": "./src/index.js",
-  "typings": "./src/index.d.ts",
+  "main": "./src/index.ts",
+  "typings": "./src/index.ts",
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.0",

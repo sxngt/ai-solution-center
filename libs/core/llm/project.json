@@ -10,6 +10,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/core/llm",
+        "main": "libs/core/llm/src/index.ts",
         "tsConfig": "libs/core/llm/tsconfig.lib.json",
         "packageJson": "libs/core/llm/package.json"
       }

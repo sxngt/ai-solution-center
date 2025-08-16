@@ -1,17 +1,16 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/jest.config.[jt]s",
       "!{projectRoot}/src/test-setup.[jt]s",
-      "!{projectRoot}/test-setup.[jt]s"
+      "!{projectRoot}/test-setup.[jt]s",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/eslint.config.mjs"
     ],
     "sharedGlobals": [
       "{workspaceRoot}/jest.config.js",
@@ -50,5 +49,39 @@
   "cli": {
     "packageManager": "yarn"
   },
-  "plugins": ["@nx/nest"]
+  "plugins": [
+    "@nx/nest",
+    {
+      "plugin": "@nx/webpack/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      },
+      "exclude": [
+        "chat-service-e2e/**/*",
+        "apps/services-e2e/**/*",
+        "apps/services/chat-service-e2e/**/*",
+        "apps/services/test-service-e2e/**/*",
+        "apps/services/test-service-e2e/**/*",
+        "apps/services/example-service-e2e/**/*",
+        "apps/services/test-api-e2e/**/*",
+        "apps/services/demo-service-e2e/**/*"
+      ]
+    }
+  ]
 }

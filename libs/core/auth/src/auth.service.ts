@@ -133,7 +133,7 @@ export class AuthService {
 
   async findUserById(id: string): Promise<User | null> {
     return this.userRepository.findOne({
-      where: { id, isActive: true },
+      where: { id: id as any, isActive: true },
     });
   }
 

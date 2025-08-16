@@ -3,26 +3,26 @@ import { UserRole } from '../entities/user.entity';
 
 export class LoginDto {
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsString()
   @MinLength(6)
-  password: string;
+  password!: string;
 }
 
 export class RegisterDto {
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsString()
   @MinLength(6)
-  password: string;
+  password!: string;
 
   @IsString()
-  firstName: string;
+  firstName!: string;
 
   @IsString()
-  lastName: string;
+  lastName!: string;
 
   @IsOptional()
   @IsEnum(UserRole)
@@ -30,9 +30,9 @@ export class RegisterDto {
 }
 
 export class AuthResponseDto {
-  access_token: string;
-  refresh_token: string;
-  user: {
+  access_token!: string;
+  refresh_token!: string;
+  user!: {
     id: string;
     email: string;
     firstName: string;
@@ -44,5 +44,5 @@ export class AuthResponseDto {
 
 export class RefreshTokenDto {
   @IsString()
-  refresh_token: string;
+  refresh_token!: string;
 }

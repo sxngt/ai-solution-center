@@ -97,7 +97,7 @@ export class LLMModule {
         LLMService,
         {
           provide: 'LLM_OPTIONS',
-          useFactory: options.useFactory,
+          useFactory: options.useFactory || (() => ({})),
           inject: options.inject || [],
         },
         {
